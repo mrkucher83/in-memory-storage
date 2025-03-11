@@ -1,23 +1,23 @@
-package storage
+package engine
 
 import (
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
-func TestNewStorage(t *testing.T) {
+func TestNewHashTable(t *testing.T) {
 	t.Parallel()
 
-	storage := NewStorage()
-	require.NotNil(t, storage)
-	require.NotNil(t, storage.data)
-	require.IsType(t, &Storage{}, storage)
+	table := NewHashTable()
+	require.NotNil(t, table)
+	require.NotNil(t, table.data)
+	require.IsType(t, &HashTable{}, table)
 }
 
-func TestStorageSet(t *testing.T) {
+func TestHashTableSet(t *testing.T) {
 	t.Parallel()
 
-	storage := &Storage{
+	table := &HashTable{
 		data: map[string]string{
 			"name": "Alex",
 		},
@@ -44,18 +44,18 @@ func TestStorageSet(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			storage.Set(test.key, test.val)
-			val, ok := storage.Get(test.key)
+			table.Set(test.key, test.val)
+			val, ok := table.Get(test.key)
 			require.Equal(t, test.want, val)
 			require.True(t, ok)
 		})
 	}
 }
 
-func TestStorageGet(t *testing.T) {
+func TestHashTableGet(t *testing.T) {
 	t.Parallel()
 
-	storage := &Storage{
+	table := &HashTable{
 		data: map[string]string{
 			"name": "Alex",
 		},
@@ -82,17 +82,17 @@ func TestStorageGet(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			val, ok := storage.Get(test.key)
+			val, ok := table.Get(test.key)
 			require.Equal(t, test.actualValue, val)
 			require.Equal(t, test.isExist, ok)
 		})
 	}
 }
 
-func TestStorageDel(t *testing.T) {
+func TestHashTableDel(t *testing.T) {
 	t.Parallel()
 
-	storage := &Storage{
+	table := &HashTable{
 		data: map[string]string{
 			"name": "Alex",
 		},
@@ -113,8 +113,8 @@ func TestStorageDel(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			storage.Del(test.key)
-			val, ok := storage.Get(test.key)
+			table.Del(test.key)
+			val, ok := table.Get(test.key)
 			require.Equal(t, "", val)
 			require.False(t, ok)
 		})

@@ -1,23 +1,17 @@
-package storage
+package engine
 
 import (
 	"go.uber.org/zap"
 )
 
-type StorageLayer interface {
-	Set(string, string)
-	Get(string) (string, bool)
-	Del(string)
-}
-
 type Engine struct {
-	storage StorageLayer
+	storage *HashTable
 	logger  *zap.Logger
 }
 
 func NewEngine(logger *zap.Logger) *Engine {
 	return &Engine{
-		storage: NewStorage(),
+		storage: NewHashTable(),
 		logger:  logger,
 	}
 }

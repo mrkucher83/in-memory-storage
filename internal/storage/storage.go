@@ -1,24 +1,39 @@
 package storage
 
-type Storage struct {
-	data map[string]string // in-memory
+import (
+	"errors"
+	"go.uber.org/zap"
+)
+
+type Engine interface {
+	Set(string, string)
+	Get(string) (string, bool)
+	Del(string)
 }
 
-func NewStorage() *Storage {
+type Storage struct {
+	engine Engine
+	logger *zap.Logger
+}
+
+func NewStorage(engine Engine, logger *zap.Logger) *Storage {
 	return &Storage{
-		data: make(map[string]string),
+		engine: engine,
+		logger: logger,
 	}
 }
 
 func (s *Storage) Set(key, val string) {
-	s.data[key] = val
+	s.engine.Set(key, val)
 }
 
-func (s *Storage) Get(key string) (string, bool) {
-	val, ok := s.data[key]
-	return val, ok
+func (s *Storage) Get(key string) (string, error) {
+	if val, ok := s.engine.Get(key); ok {
+		return val, nil
+	}
+	return "", errors.New("value not found")
 }
 
 func (s *Storage) Del(key string) {
-	delete(s.data, key)
+	s.engine.Del(key)
 }
