@@ -6,6 +6,12 @@ import (
 	"strings"
 )
 
+var (
+	ErrEmptyQuery  = errors.New("empty query")
+	ErrInvalidCmd  = errors.New("invalid command")
+	ErrInvalidArgs = errors.New("invalid arguments")
+)
+
 type Query struct {
 	Command   string
 	Arguments []string
@@ -29,18 +35,18 @@ func NewCompute(logger *zap.Logger) *Compute {
 func (c *Compute) Parse(input string) (*Query, error) {
 	parts := strings.Fields(input)
 	if len(parts) == 0 {
-		return nil, errors.New("empty query")
+		return nil, ErrEmptyQuery
 	}
 
 	cmd := parts[0]
 	if !isValidCommand(cmd) {
 		c.logger.Debug("invalid command", zap.String("query", cmd))
-		return nil, errors.New("invalid command")
+		return nil, ErrInvalidCmd
 	}
 
 	if !isValidArgsCount(cmd, parts[1:]) {
 		c.logger.Debug("invalid arguments", zap.String("arguments", input))
-		return nil, errors.New("invalid arguments")
+		return nil, ErrInvalidArgs
 	}
 
 	query := NewQuery(cmd, parts[1:])

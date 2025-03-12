@@ -5,6 +5,8 @@ import (
 	"go.uber.org/zap"
 )
 
+var ErrValNotFound = errors.New("value not found")
+
 type Engine interface {
 	Set(string, string)
 	Get(string) (string, bool)
@@ -31,7 +33,7 @@ func (s *Storage) Get(key string) (string, error) {
 	if val, ok := s.engine.Get(key); ok {
 		return val, nil
 	}
-	return "", errors.New("value not found")
+	return "", ErrValNotFound
 }
 
 func (s *Storage) Del(key string) {
